@@ -1,0 +1,26 @@
+---
+- name: Fail2Ban >> RedHat | Stop service
+  become: true
+  tags: [fail2ban, uninstall]
+  ansible.builtin.systemd:
+    name: fail2ban
+    state: stopped
+    enabled: false
+  failed_when: false
+
+- name: Fail2Ban >> RedHat | Uninstall package
+  become: true
+  tags: [fail2ban, uninstall]
+  ansible.builtin.dnf:
+    name: fail2ban
+    state: absent
+
+- name: Fail2Ban >> RedHat | Remove config
+  become: true
+  tags: [fail2ban, uninstall]
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - /etc/fail2ban/jail.local
+    - /etc/fail2ban/jail.d/extra.local

@@ -1,0 +1,9 @@
+[DEFAULT]
+maxretry = {{ fail2ban_max_retry }}
+bantime = {{ fail2ban_ban_time }}
+findtime = {{ fail2ban_find_time }}
+ignoreip = {{ fail2ban_ignore_ips | join(' ') }}
+bantime.increment = {{ 'true' if fail2ban_ban_time_increment else 'false' }}
+bantime.multipliers = {{ fail2ban_ban_time_multipliers }}
+bantime.maxtime = {{ fail2ban_ban_time_max }}
+bantime.overalljails = true

@@ -1,0 +1,10 @@
+---
+- name: Fail2Ban | Install
+  tags: [fail2ban, install]
+  when: not fail2ban_uninstall
+  ansible.builtin.include_tasks: install.yml
+
+- name: Fail2Ban | Uninstall
+  tags: [fail2ban, uninstall]
+  when: fail2ban_uninstall
+  ansible.builtin.include_tasks: uninstall.yml

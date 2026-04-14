@@ -1,0 +1,4 @@
+---
+- name: Fail2Ban | RedHat Uninstall
+  ansible.builtin.include_tasks: redhat/uninstall.yml
+  when: ansible_facts['os_family'] == "RedHat"

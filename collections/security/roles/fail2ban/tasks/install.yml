@@ -1,0 +1,4 @@
+---
+- name: Fail2Ban | RedHat Install
+  ansible.builtin.include_tasks: redhat/install.yml
+  when: ansible_facts['os_family'] == "RedHat"
