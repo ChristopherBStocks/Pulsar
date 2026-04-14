@@ -1,0 +1,7 @@
+---
+- name: Timezone >> Linux | Set value
+  become: true
+  tags: [timezone]
+  community.general.timezone:
+    name: "{{ timezone_value }}"
+  notify: Timezone >> Linux | Restart services

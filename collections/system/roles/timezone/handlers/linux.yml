@@ -1,0 +1,12 @@
+---
+- name: Timezone >> Linux | Restart services
+  become: true
+  register: result
+  ansible.builtin.service:
+    name: "{{ item }}"
+    state: restarted
+  loop: "{{ timezone_ntp_services }}"
+  failed_when:
+    - result.failed
+    - '"Could not find" not in result.msg'
+    - '"not found" not in result.msg'

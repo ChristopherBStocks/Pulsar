@@ -1,0 +1,13 @@
+---
+- name: Timezone | Assert Value
+  tags: [timezone]
+  ansible.builtin.assert:
+    that:
+      - timezone_value | length > 0
+      - 'timezone_value is match("^[A-Za-z_]+/[A-Za-z_/]+$")'
+    fail_msg: "timezone_value must be non-empty IANA timezone"
+
+- name: Timezone | Linux Setup
+  tags: [timezone]
+  ansible.builtin.include_tasks: linux.yml
+  when: ansible_facts['system'] == 'Linux'
