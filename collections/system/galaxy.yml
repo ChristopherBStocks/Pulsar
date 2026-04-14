@@ -1,0 +1,16 @@
+---
+namespace: christopherbstocks
+name: pulsar_system
+version: 0.0.0
+readme: ../../README.md
+license_file: ../../LICENSE.md
+authors:
+  - Christopher Stocks <christopher.stocks@protonmail.ch>
+description: Ansible collection for core Linux system configuration.
+tags:
+  - linux
+  - system
+  - configuration
+repository: https://github.com/ChristopherBStocks/Pulsar
+dependencies: { }
+build_ignore: [ ]
