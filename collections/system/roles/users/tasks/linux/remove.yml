@@ -1,0 +1,9 @@
+---
+- name: Users >> Linux | Remove Account
+  become: true
+  tags: [users, remove]
+  ansible.builtin.user:
+    name: "{{ item }}"
+    state: absent
+    remove: true
+  loop: "{{ users_remove_list }}"

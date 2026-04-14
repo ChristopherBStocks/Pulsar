@@ -1,0 +1,7 @@
+---
+users_ensure_list: []
+users_remove_list: []
+users_default_update_password: always
+users_default_shell: /bin/bash
+users_default_password: "!"
+users_default_groups: []

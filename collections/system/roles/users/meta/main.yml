@@ -1,0 +1,9 @@
+---
+galaxy_info:
+  author: Christopher Stocks
+  description: Manages system users
+  company: N/A
+  license: MIT
+  min_ansible_version: "2.19"
+  galaxy_tags: [linux, system, users, ssh, sudo]
+dependencies: []

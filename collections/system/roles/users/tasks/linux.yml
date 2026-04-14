@@ -1,0 +1,10 @@
+---
+- name: Users >> Linux | Remove
+  tags: [users, remove]
+  ansible.builtin.include_tasks: linux/remove.yml
+  when: users_remove_list | length > 0
+
+- name: Users >> Linux | Ensure
+  tags: [users, ensure]
+  ansible.builtin.include_tasks: linux/ensure.yml
+  when: users_ensure_list | length > 0

@@ -1,0 +1,52 @@
+---
+- name: Users >> Linux | Assert Name exists
+  tags: [users, ensure]
+  ansible.builtin.assert:
+    that:
+      - item.name is defined
+      - item.name | length > 0
+    fail_msg: "User entry missing name"
+  no_log: true
+  loop: "{{ users_ensure_list }}"
+  loop_control:
+    label: "{{ item.name | default('unknown') }}"
+
+- name: Users >> Linux | Assert SSH exists
+  tags: [users, ensure]
+  ansible.builtin.assert:
+    that:
+      - item.ssh_keys is defined
+      - item.ssh_keys | length > 0
+    fail_msg: "No SSH keys defined, unable to continue - {{ item.name }}"
+  no_log: true
+  loop: "{{ users_ensure_list }}"
+  loop_control:
+    label: "{{ item.name }}"
+
+- name: Users >> Linux | Create Account
+  become: true
+  tags: [users, ensure]
+  no_log: true
+  ansible.builtin.user:
+    name: "{{ item.name }}"
+    groups: "{{ item.groups | default(users_default_groups) }}"
+    append: false
+    shell: "{{ item.shell | default(users_default_shell) }}"
+    password: "{{ item.password | default(users_default_password) }}"
+    update_password: "{{ item.update_password | default(users_default_update_password) }}"
+    state: present
+  loop: "{{ users_ensure_list }}"
+  loop_control:
+    label: "{{ item.name }}"
+
+- name: Users >> Linux | Deploy SSH
+  become: true
+  tags: [users, ensure]
+  ansible.posix.authorized_key:
+    user: "{{ item.name }}"
+    key: "{{ item.ssh_keys | join('\n') }}"
+    state: present
+    exclusive: true
+  loop: "{{ users_ensure_list }}"
+  loop_control:
+    label: "{{ item.name }}"
