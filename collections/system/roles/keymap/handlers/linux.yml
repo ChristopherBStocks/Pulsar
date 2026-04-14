@@ -1,0 +1,9 @@
+---
+- name: Keymap >> Linux | Reload vconsole
+  become: true
+  tags: [keymap]
+  when: ansible_facts['system'] == 'Linux'
+  ansible.builtin.systemd:
+    name: systemd-vconsole-setup.service
+    state: restarted
+    daemon_reload: false

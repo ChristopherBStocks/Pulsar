@@ -1,0 +1,14 @@
+---
+- name: Keymap >> Linux | Set keyboard layout
+  become: true
+  tags: [keymap]
+  when: ansible_facts['system'] == 'Linux'
+  ansible.builtin.lineinfile:
+    path: /etc/vconsole.conf
+    regexp: "^KEYMAP="
+    line: 'KEYMAP="{{ keymap_value }}"'
+    create: true
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Keymap >> Linux | Reload vconsole

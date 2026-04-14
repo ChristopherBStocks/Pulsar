@@ -1,0 +1,12 @@
+---
+- name: Keymap | Assert Value
+  tags: [keymap]
+  ansible.builtin.assert:
+    that:
+      - keymap_value | length > 0
+    fail_msg: "keymap_value must be set"
+
+- name: Keymap | Linux Setup
+  tags: [keymap]
+  ansible.builtin.include_tasks: linux.yml
+  when: ansible_facts['system'] == 'Linux'
