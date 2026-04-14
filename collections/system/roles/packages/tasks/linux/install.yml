@@ -1,0 +1,7 @@
+---
+- name: Packages | Ensure install
+  become: true
+  tags: [packages, install]
+  ansible.builtin.package:
+    name: "{{ packages_install }}"
+    state: present

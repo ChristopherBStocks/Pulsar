@@ -1,0 +1,10 @@
+---
+- name: Packages >> Linux | Install
+  tags: [packages, install]
+  ansible.builtin.include_tasks: linux/install.yml
+  when: packages_install | length > 0
+
+- name: Packages >> Linux | Uninstall
+  tags: [packages, uninstall]
+  ansible.builtin.include_tasks: linux/uninstall.yml
+  when: packages_uninstall | length > 0

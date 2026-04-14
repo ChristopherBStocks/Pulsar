@@ -1,0 +1,7 @@
+---
+- name: Packages >> Linux | Uninstall
+  become: true
+  tags: [packages, uninstall]
+  ansible.builtin.package:
+    name: "{{ packages_uninstall }}"
+    state: absent
