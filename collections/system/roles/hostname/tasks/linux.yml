@@ -1,0 +1,16 @@
+---
+- name: Hostname >> Linux | Set system hostname
+  become: true
+  tags: [hostname]
+  ansible.builtin.hostname:
+    name: "{{ hostname_value }}"
+    use: "{{ hostname_backend }}"
+
+- name: Hostname >> Linux | Update /etc/hosts
+  become: true
+  tags: [hostname]
+  ansible.builtin.lineinfile:
+    path: /etc/hosts
+    regexp: "^127\\.0\\.0\\.1"
+    line: "127.0.0.1 localhost {{ hostname_value }}"
+    state: present

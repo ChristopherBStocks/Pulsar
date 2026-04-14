@@ -1,0 +1,13 @@
+---
+- name: Hostname | Assert Value
+  tags: [hostname]
+  ansible.builtin.assert:
+    that:
+      - hostname_value | length > 0
+      - 'hostname_value is match("^[a-z0-9]([a-z0-9\-]{0,251}[a-z0-9])?$")'
+    fail_msg: "hostname_value must be set"
+
+- name: Hostname | Linux Setup
+  tags: [hostname]
+  ansible.builtin.include_tasks: linux.yml
+  when: ansible_facts['system'] == 'Linux'

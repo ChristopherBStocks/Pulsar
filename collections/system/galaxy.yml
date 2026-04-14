@@ -1,7 +1,7 @@
 ---
 namespace: christopherbstocks
 name: pulsar_system
-version: 0.0.0
+version: 0.1.0
 readme: ../../README.md
 license_file: ../../LICENSE.md
 authors:
@@ -12,5 +12,5 @@ tags:
   - system
   - configuration
 repository: https://github.com/ChristopherBStocks/Pulsar
-dependencies: { }
-build_ignore: [ ]
+dependencies: {}
+build_ignore: []
