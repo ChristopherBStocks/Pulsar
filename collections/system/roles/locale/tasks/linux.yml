@@ -1,0 +1,5 @@
+---
+- name: Locale >> Linux | RedHat Setup
+  tags: [locale]
+  ansible.builtin.include_tasks: redhat.yml
+  when: ansible_facts['os_family'] == "RedHat"

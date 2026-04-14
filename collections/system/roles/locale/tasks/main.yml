@@ -1,0 +1,12 @@
+---
+- name: Locale | Assert Value
+  tags: [locale]
+  ansible.builtin.assert:
+    that:
+      - locale_value | length > 0
+      - 'locale_value is match("^[a-zA-Z_]+\\.UTF-8$")'
+    fail_msg: "locale_value must be set (e.g. en_US.UTF-8)"
+
+- name: Locale | Linux Setup
+  ansible.builtin.include_tasks: linux.yml
+  when: ansible_facts['system'] == "Linux"
