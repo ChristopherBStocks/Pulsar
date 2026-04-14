@@ -1,0 +1,14 @@
+---
+- name: firewalld | Configure rules
+  become: true
+  tags: [firewalld, rules]
+  ansible.posix.firewalld:
+    rich_rule: >-
+      rule family="ipv4"
+      {% if item.incoming != '0.0.0.0/0' %}source address="{{ item.incoming }}" {% endif %}
+      port port="{{ item.port }}" protocol="{{ item.protocol }}" {{ item.action }}
+    permanent: true
+    state: enabled
+  loop: "{{ firewalld_traffic }}"
+  loop_control:
+    label: "{{ item.protocol }}/{{ item.port }} from {{ item.incoming }}"

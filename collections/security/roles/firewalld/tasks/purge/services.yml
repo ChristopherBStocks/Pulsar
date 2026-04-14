@@ -1,0 +1,13 @@
+---
+- name: firewalld | Purge Services
+  become: true
+  tags: [firewalld, purge, services]
+  register: result
+  changed_when: result.stdout | trim != ''
+  ansible.builtin.shell: |
+    list=$(firewall-cmd --permanent --list-services)
+    [ -z "$list" ] && exit 0
+    for service in $list; do
+      firewall-cmd --permanent --remove-service=$service
+    done
+    echo "$list"

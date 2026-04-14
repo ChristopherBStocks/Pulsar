@@ -1,0 +1,8 @@
+---
+firewalld_zone: drop
+
+firewalld_traffic:
+  - { incoming: "0.0.0.0/0", port: "22", protocol: "tcp", action: "accept" }
+
+firewalld_forwards: []
+# - { incoming: "0.0.0.0/0", iport: "22", protocol: "tcp", outgoing: "outgoing", oport: "22" }

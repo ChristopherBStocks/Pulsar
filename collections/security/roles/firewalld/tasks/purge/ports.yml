@@ -1,0 +1,13 @@
+---
+- name: firewalld | Purge Ports
+  become: true
+  tags: [firewalld, purge, ports]
+  register: result
+  changed_when: result.stdout | trim != ''
+  ansible.builtin.shell: |
+    list=$(firewall-cmd --permanent --list-ports)
+    [ -z "$list" ] && exit 0
+    for port in $list; do
+      firewall-cmd --permanent --remove-port=$port
+    done
+    echo "$list"

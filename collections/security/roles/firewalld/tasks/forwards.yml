@@ -1,0 +1,47 @@
+---
+- name: firewalld | Configure IP Forwarding
+  become: true
+  tags: [firewalld, forwards]
+  ansible.posix.sysctl:
+    name: net.ipv4.ip_forward
+    value: "{{ '1' if firewalld_forwards | length > 0 else '0' }}"
+    sysctl_set: true
+
+- name: firewalld | Configure Masquerade
+  become: true
+  tags: [firewalld, forwards]
+  ansible.posix.firewalld:
+    masquerade: true
+    permanent: true
+    state: "{{ 'enabled' if firewalld_forwards | length > 0 else 'disabled' }}"
+
+- name: firewalld | Resolve Forward Destinations
+  tags: [firewalld, forwards]
+  delegate_to: localhost
+  check_mode: false
+  changed_when: false
+  ansible.builtin.getent:
+    database: hosts
+    key: "{{ item.outgoing }}"
+  register: firewalld_getent
+  loop: "{{ firewalld_forwards }}"
+  loop_control:
+    label: "{{ item.outgoing }}"
+  when: firewalld_forwards | length > 0
+
+- name: firewalld | Configure Port Forwards
+  become: true
+  tags: [firewalld, forwards]
+  ansible.posix.firewalld:
+    rich_rule: >-
+      rule family="ipv4"
+      {% if item.item.incoming != '0.0.0.0/0' %}source address="{{ item.item.incoming }}" {% endif %}
+      forward-port port="{{ item.item.iport }}" protocol="{{ item.item.protocol }}"
+      to-addr="{{ item.ansible_facts.getent_hosts.keys() | first }}"
+      to-port="{{ item.item.oport }}"
+    permanent: true
+    state: enabled
+  loop: "{{ firewalld_getent.results | default([]) }}"
+  loop_control:
+    label: "{{ item.item.protocol }}/{{ item.item.iport }} -> {{ item.item.outgoing }}:{{ item.item.oport }}"
+  when: firewalld_forwards | length > 0

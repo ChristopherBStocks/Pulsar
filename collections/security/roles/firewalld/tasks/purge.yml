@@ -1,0 +1,16 @@
+---
+- name: firewalld | Purge Zone
+  tags: [firewalld, purge, zone]
+  ansible.builtin.include_tasks: purge/zone.yml
+
+- name: firewalld | Purge Ports
+  tags: [firewalld, purge, ports]
+  ansible.builtin.include_tasks: purge/ports.yml
+
+- name: firewalld | Purge Services
+  tags: [firewalld, purge, services]
+  ansible.builtin.include_tasks: purge/services.yml
+
+- name: firewalld | Purge Rich Rules
+  tags: [firewalld, purge, rich-rules]
+  ansible.builtin.include_tasks: purge/rich-rules.yml

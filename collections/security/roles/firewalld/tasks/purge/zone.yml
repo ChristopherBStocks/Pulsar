@@ -1,0 +1,6 @@
+---
+- name: firewalld | Reset Default Zone
+  become: true
+  tags: [firewalld, purge, zone]
+  ansible.builtin.command: firewall-cmd --set-default-zone={{ firewalld_zone }}
+  changed_when: false

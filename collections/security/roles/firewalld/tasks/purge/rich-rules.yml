@@ -1,0 +1,13 @@
+---
+- name: firewalld | Purge Rich Rules
+  become: true
+  tags: [firewalld, purge, rich-rules]
+  register: result
+  changed_when: result.stdout | trim != ''
+  ansible.builtin.shell: |
+    list=$(firewall-cmd --permanent --list-rich-rules)
+    [ -z "$list" ] && exit 0
+    while IFS= read -r rule; do
+      firewall-cmd --permanent --remove-rich-rule="$rule"
+    done <<< "$list"
+    echo "$list"
