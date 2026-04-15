@@ -1,5 +1,6 @@
 ---
 - name: NetBird >> RedHat | Validate setup key
+  tags: [netbird, install]
   ansible.builtin.assert:
     that: netbird_setup_key | length > 0
     fail_msg: "netbird_setup_key must be set"
@@ -22,7 +23,7 @@
   ansible.builtin.dnf:
     name: netbird
     state: present
-  notify: NetBird | Activate
+  notify: NetBird >> Linux | Activate
 
 - name: NetBird >> RedHat | Check registration
   become: true
