@@ -21,9 +21,8 @@
   become: false
   check_mode: false
   changed_when: false
-  ansible.builtin.getent:
-    database: hosts
-    key: "{{ item.outgoing }}"
+  ansible.builtin.command:
+    cmd: "python3 -c 'import socket; print(socket.gethostbyname(\"{{ item.outgoing }}\"))'"
   register: firewalld_getent
   loop: "{{ firewalld_forwards }}"
   loop_control:
@@ -38,7 +37,7 @@
       rule family="ipv4"
       {% if item.item.incoming != '0.0.0.0/0' %}source address="{{ item.item.incoming }}" {% endif %}
       forward-port port="{{ item.item.iport }}" protocol="{{ item.item.protocol }}"
-      to-addr="{{ item.ansible_facts.getent_hosts.keys() | first }}"
+      to-addr="{{ item.stdout }}"
       to-port="{{ item.item.oport }}"
     permanent: true
     state: enabled
