@@ -1,0 +1,10 @@
+---
+- name: CrowdStrike >> RedHat | Install
+  tags: [crowdstrike, install]
+  when: not crowdstrike_uninstall
+  ansible.builtin.include_tasks: redhat/install.yml
+
+- name: CrowdStrike RedHat | Uninstall
+  tags: [crowdstrike, uninstall]
+  when: crowdstrike_uninstall
+  ansible.builtin.include_tasks: redhat/uninstall.yml

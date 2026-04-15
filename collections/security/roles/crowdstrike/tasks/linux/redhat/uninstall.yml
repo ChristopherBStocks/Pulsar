@@ -1,0 +1,7 @@
+---
+- name: CrowdStrike >> RedHat | Uninstall
+  become: true
+  tags: [crowdstrike]
+  ansible.builtin.dnf:
+    name: falcon-sensor
+    state: absent

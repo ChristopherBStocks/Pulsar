@@ -1,0 +1,41 @@
+---
+- name: CrowdStrike >> RedHat | Download Installer
+  tags: [crowdstrike]
+  ansible.builtin.get_url:
+    url: "{{ crowdstrike_download_url }}"
+    dest: "/tmp/falcon-sensor.rpm"
+    mode: "0644"
+
+- name: CrowdStrike >> RedHat | Install Package
+  become: true
+  tags: [crowdstrike]
+  ansible.builtin.dnf:
+    name: /tmp/falcon-sensor.rpm
+    state: present
+    disable_gpg_check: true
+  notify: CrowdStrike >> Linux | Activate
+
+- name: CrowdStrike >> RedHat | Remove installer
+  become: true
+  tags: [crowdstrike]
+  ansible.builtin.file:
+    path: /tmp/falcon-sensor.rpm
+    state: absent
+
+- name: CrowdStrike >> RedHat | Check existing CID
+  become: true
+  tags: [crowdstrike]
+  register: falcon_cid_check
+  failed_when: false
+  changed_when: false
+  ansible.builtin.command:
+    cmd: /opt/CrowdStrike/falconctl -g --cid
+
+- name: CrowdStrike >> RedHat | Register CID
+  become: true
+  tags: [crowdstrike]
+  when: falcon_cid_check.stdout is not search(crowdstrike_cid)
+  changed_when: true
+  ansible.builtin.command:
+    cmd: /opt/CrowdStrike/falconctl -s -f --cid={{ crowdstrike_cid }}
+  notify: CrowdStrike >> Linux | Activate

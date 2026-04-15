@@ -1,0 +1,9 @@
+---
+- name: CrowdStrike >> Linux | Activate
+  become: true
+  tags: [crowdstrike]
+  when: ansible_facts['system'] == 'Linux'
+  ansible.builtin.systemd:
+    name: falcon-sensor
+    state: started
+    enabled: true
