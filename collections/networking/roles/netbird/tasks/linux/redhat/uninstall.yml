@@ -1,0 +1,22 @@
+---
+- name: NetBird >> RedHat | Disconnect
+  become: true
+  tags: [netbird, uninstall]
+  failed_when: false
+  changed_when: true
+  ansible.builtin.command:
+    cmd: netbird down
+
+- name: NetBird >> RedHat | Uninstall package
+  become: true
+  tags: [netbird, uninstall]
+  ansible.builtin.dnf:
+    name: netbird
+    state: absent
+
+- name: NetBird >> RedHat | Remove repository
+  become: true
+  tags: [netbird, uninstall]
+  ansible.builtin.yum_repository:
+    name: netbird
+    state: absent

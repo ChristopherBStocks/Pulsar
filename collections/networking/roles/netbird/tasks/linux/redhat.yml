@@ -1,0 +1,10 @@
+---
+- name: NetBird >> RedHat | Install
+  tags: [netbird, install]
+  when: not netbird_uninstall
+  ansible.builtin.include_tasks: redhat/install.yml
+
+- name: NetBird >> RedHat | Uninstall
+  tags: [netbird, uninstall]
+  when: netbird_uninstall
+  ansible.builtin.include_tasks: redhat/uninstall.yml

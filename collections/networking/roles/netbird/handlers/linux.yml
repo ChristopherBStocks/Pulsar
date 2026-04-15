@@ -1,0 +1,9 @@
+---
+- name: NetBird >> Linux | Activate
+  become: true
+  tags: [netbird]
+  when: ansible_facts['system'] == 'Linux'
+  ansible.builtin.systemd:
+    name: netbird
+    state: started
+    enabled: true

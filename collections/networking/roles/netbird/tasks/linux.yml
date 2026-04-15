@@ -1,0 +1,5 @@
+---
+- name: NetBird >> Linux | RedHat Setup
+  tags: [netbird]
+  ansible.builtin.include_tasks: linux/redhat.yml
+  when: ansible_facts['os_family'] == "RedHat"
