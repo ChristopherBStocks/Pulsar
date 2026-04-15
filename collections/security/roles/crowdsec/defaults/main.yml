@@ -7,6 +7,6 @@ crowdsec_additional_packages:
 crowdsec_collections:
   - crowdsecurity/sshd
   - crowdsecurity/linux
-  - crowdsecurity/nftables
+  - crowdsecurity/iptables
   - crowdsecurity/linux-lpe
   - crowdsecurity/whitelist-good-actors
