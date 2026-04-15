@@ -1,3 +1,9 @@
+## [networking/v0.1.0] - 2026-04-15
+
+### 🚀 Features
+
+- *(networking)* Add netbird role
+- *(networking)* Add openssh role
 ## [networking/v0.0.0] - 2026-04-15
 
 ### ⚙️ Miscellaneous Tasks
