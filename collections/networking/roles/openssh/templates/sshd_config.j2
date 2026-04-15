@@ -1,0 +1,31 @@
+Port {{ openssh_ports | join('\nPort ') }}
+PermitRootLogin {{ openssh_permit_root_login }}
+MaxAuthTries {{ openssh_max_auth_tries }}
+LoginGraceTime {{ openssh_login_grace_time }}
+ClientAliveCountMax {{ openssh_client_alive_count_max }}
+ClientAliveInterval {{ openssh_client_alive_interval }}
+MaxSessions {{ openssh_max_sessions }}
+MaxStartups {{ openssh_max_startups }}
+{% if openssh_allowed_users | length > 0 %}
+AllowUsers {{ openssh_allowed_users | join(' ') }}
+{% endif %}
+AllowGroups {{ openssh_allowed_groups | join(' ') }}
+UsePAM yes
+PasswordAuthentication no
+PubkeyAuthentication yes
+PermitEmptyPasswords no
+AllowAgentForwarding {{ 'yes' if openssh_allow_agent_forwarding else 'no' }}
+AllowTcpForwarding {{ 'yes' if openssh_allow_tcp_forwarding else 'no' }}
+X11Forwarding no
+IgnoreRhosts yes
+HostbasedAuthentication no
+UseDNS no
+LogLevel VERBOSE
+Ciphers {{ openssh_ciphers | join(',') }}
+MACs {{ openssh_macs | join(',') }}
+KexAlgorithms {{ openssh_kex_algorithms | join(',') }}
+AuthorizedKeysFile {{ openssh_authorized_keys_file }}
+PrintLastLog {{ 'yes' if openssh_print_last_log else 'no' }}
+PrintMotd no
+Banner {{ openssh_banner }}
+Subsystem sftp {{ openssh_sftp_subsystem }}

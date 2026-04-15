@@ -1,0 +1,27 @@
+---
+openssh_ports: [22]
+openssh_permit_root_login: prohibit-password
+openssh_allowed_users: []
+openssh_allowed_groups: [wheel]
+openssh_max_auth_tries: 3
+openssh_login_grace_time: 30s
+openssh_client_alive_count_max: 3
+openssh_client_alive_interval: 60
+openssh_max_sessions: 5
+openssh_max_startups: "10:30:60"
+openssh_allow_tcp_forwarding: false
+openssh_allow_agent_forwarding: false
+openssh_authorized_keys_file: .ssh/authorized_keys
+openssh_print_last_log: true
+openssh_banner: /etc/issue.net
+openssh_sftp_subsystem: "{{ '/usr/libexec/openssh/sftp-server' if ansible_facts['os_family'] == 'RedHat' else '/usr/lib/openssh/sftp-server' }}"
+openssh_ciphers:
+  - aes256-gcm@openssh.com
+  - chacha20-poly1305@openssh.com
+openssh_macs:
+  - hmac-sha2-256-etm@openssh.com
+  - hmac-sha2-512-etm@openssh.com
+openssh_kex_algorithms:
+  - mlkem768x25519-sha256
+  - curve25519-sha256
+  - diffie-hellman-group16-sha512

@@ -1,0 +1,20 @@
+---
+- name: OpenSSH >> Linux | Deploy config
+  become: true
+  tags: [openssh]
+  ansible.builtin.template:
+    src: sshd_config.j2
+    dest: /etc/ssh/sshd_config
+    owner: root
+    group: root
+    mode: "0600"
+    validate: sshd -t -f %s
+  notify: OpenSSH >> Linux | Restart
+
+- name: OpenSSH | Ensure running
+  become: true
+  tags: [openssh]
+  ansible.builtin.systemd:
+    name: sshd
+    state: started
+    enabled: true
