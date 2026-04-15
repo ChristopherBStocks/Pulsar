@@ -6,3 +6,11 @@
   ansible.builtin.systemd:
     name: crowdsec
     state: restarted
+
+- name: CrowdSec | Restart bouncer
+  become: true
+  tags: [crowdsec]
+  when: ansible_facts['system'] == 'Linux'
+  ansible.builtin.systemd:
+    name: crowdsec-firewall-bouncer
+    state: restarted

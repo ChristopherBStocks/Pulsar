@@ -78,6 +78,40 @@
     cmd: cscli console enroll {{ crowdsec_enrollment_key }}
   notify: CrowdSec | Restart
 
+- name: CrowdSec >> RedHat | Check registered bouncers
+  become: true
+  tags: [crowdsec]
+  ansible.builtin.command:
+    cmd: cscli bouncers list -o raw
+  register: crowdsec_bouncers_list
+  changed_when: false
+
+- name: CrowdSec >> RedHat | Register firewall bouncer
+  become: true
+  tags: [crowdsec]
+  when: item.bouncer_name is defined and item.bouncer_name not in crowdsec_bouncers_list.stdout
+  ansible.builtin.command:
+    cmd: cscli bouncers add {{ item.bouncer_name }} -o raw
+  register: crowdsec_bouncer_key
+  loop: "{{ crowdsec_additional_packages }}"
+  loop_control:
+    label: "{{ item.name }}"
+
+- name: CrowdSec >> RedHat | Write bouncer API key to config
+  become: true
+  tags: [crowdsec]
+  when:
+    - item.item.bouncer_config is defined
+    - item is not skipped
+  ansible.builtin.lineinfile:
+    path: "{{ item.item.bouncer_config }}"
+    regexp: '^api_key:'
+    line: "api_key: {{ item.stdout }}"
+  loop: "{{ crowdsec_bouncer_key.results }}"
+  loop_control:
+    label: "{{ item.item.name }}"
+  notify: CrowdSec | Restart bouncer
+
 - name: CrowdSec >> RedHat | Ensure additional services running
   become: true
   tags: [crowdsec]

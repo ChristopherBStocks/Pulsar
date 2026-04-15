@@ -4,6 +4,8 @@ crowdsec_enrollment_key: ""
 crowdsec_additional_packages:
   - name: crowdsec-firewall-bouncer-nftables
     service: crowdsec-firewall-bouncer
+    bouncer_name: cs-firewall-bouncer
+    bouncer_config: /etc/crowdsec/bouncers/crowdsec-firewall-bouncer.yaml
 crowdsec_collections:
   - crowdsecurity/sshd
   - crowdsecurity/linux
