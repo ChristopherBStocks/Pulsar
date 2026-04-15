@@ -1,0 +1,5 @@
+---
+- name: CrowdSec >> Linux | RedHat Setup
+  tags: [crowdsec]
+  ansible.builtin.include_tasks: linux/redhat.yml
+  when: ansible_facts['os_family'] == "RedHat"

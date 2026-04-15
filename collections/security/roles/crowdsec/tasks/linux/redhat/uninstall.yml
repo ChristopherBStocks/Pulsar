@@ -1,0 +1,48 @@
+---
+- name: CrowdSec >> RedHat | Stop additional services
+  become: true
+  tags: [crowdsec]
+  when: item.service is defined
+  ansible.builtin.systemd:
+    name: "{{ item.service }}"
+    state: stopped
+    enabled: false
+  failed_when: false
+  loop: "{{ crowdsec_additional_packages }}"
+  loop_control:
+    label: "{{ item.name }}"
+
+- name: CrowdSec >> RedHat | Stop crowdsec
+  become: true
+  tags: [crowdsec]
+  ansible.builtin.systemd:
+    name: crowdsec
+    state: stopped
+    enabled: false
+  failed_when: false
+
+- name: CrowdSec >> RedHat | Uninstall packages
+  become: true
+  tags: [crowdsec]
+  ansible.builtin.dnf:
+    name: "{{ ['crowdsec'] + (crowdsec_additional_packages | map(attribute='name') | list) }}"
+    state: absent
+
+- name: CrowdSec >> RedHat | Remove repository
+  become: true
+  tags: [crowdsec]
+  ansible.builtin.yum_repository:
+    name: crowdsec
+    state: absent
+
+- name: CrowdSec >> RedHat | Remove GPG keys
+  become: true
+  tags: [crowdsec]
+  ansible.builtin.rpm_key:
+    key: "{{ item }}"
+    state: absent
+  failed_when: false
+  loop:
+    - https://packagecloud.io/crowdsec/crowdsec/gpgkey/crowdsec-crowdsec-EDE2C695EC9A5A5C.pub.gpg
+    - https://packagecloud.io/crowdsec/crowdsec/gpgkey/crowdsec-crowdsec-C822EDD6B39954A1.pub.gpg
+    - https://packagecloud.io/crowdsec/crowdsec/gpgkey/crowdsec-crowdsec-FED78314A2468CCF.pub.gpg

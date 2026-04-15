@@ -1,0 +1,10 @@
+---
+- name: CrowdSec >> RedHat | Install
+  tags: [crowdsec, install]
+  when: not crowdsec_uninstall
+  ansible.builtin.include_tasks: redhat/install.yml
+
+- name: CrowdSec >> RedHat | Uninstall
+  tags: [crowdsec, uninstall]
+  when: crowdsec_uninstall
+  ansible.builtin.include_tasks: redhat/uninstall.yml

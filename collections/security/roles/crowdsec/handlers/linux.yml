@@ -1,0 +1,8 @@
+---
+- name: CrowdSec | Restart
+  become: true
+  tags: [crowdsec]
+  when: ansible_facts['system'] == 'Linux'
+  ansible.builtin.systemd:
+    name: crowdsec
+    state: restarted

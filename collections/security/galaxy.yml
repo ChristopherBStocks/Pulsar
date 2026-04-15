@@ -1,7 +1,7 @@
 ---
 namespace: christopherbstocks
 name: pulsar_security
-version: 0.0.0
+version: 0.1.0
 readme: ../../README.md
 license_file: ../../LICENSE.md
 authors:

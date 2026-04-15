@@ -1,0 +1,91 @@
+---
+- name: CrowdSec >> RedHat | Add repository
+  become: true
+  tags: [crowdsec]
+  ansible.builtin.yum_repository:
+    name: crowdsec
+    description: CrowdSec
+    baseurl: https://packagecloud.io/crowdsec/crowdsec/rpm_any/rpm_any/$basearch
+    enabled: true
+    gpgcheck: true
+    gpgkey: https://packagecloud.io/crowdsec/crowdsec/gpgkey
+    repo_gpgcheck: true
+
+- name: CrowdSec >> RedHat | Import GPG keys
+  become: true
+  tags: [crowdsec]
+  ansible.builtin.rpm_key:
+    key: "{{ item }}"
+    state: present
+  loop:
+    - https://packagecloud.io/crowdsec/crowdsec/gpgkey/crowdsec-crowdsec-EDE2C695EC9A5A5C.pub.gpg
+    - https://packagecloud.io/crowdsec/crowdsec/gpgkey/crowdsec-crowdsec-C822EDD6B39954A1.pub.gpg
+    - https://packagecloud.io/crowdsec/crowdsec/gpgkey/crowdsec-crowdsec-FED78314A2468CCF.pub.gpg
+
+- name: CrowdSec >> RedHat | Install CrowdSec
+  become: true
+  tags: [crowdsec]
+  ansible.builtin.dnf:
+    name: crowdsec
+    state: present
+  notify: CrowdSec | Restart
+
+- name: CrowdSec >> RedHat | Install additional packages
+  become: true
+  tags: [crowdsec]
+  when: crowdsec_additional_packages | length > 0
+  ansible.builtin.dnf:
+    name: "{{ crowdsec_additional_packages | map(attribute='name') | list }}"
+    state: present
+  notify: CrowdSec | Restart
+
+- name: CrowdSec >> RedHat | Ensure crowdsec running
+  become: true
+  tags: [crowdsec]
+  ansible.builtin.systemd:
+    name: crowdsec
+    state: started
+    enabled: true
+
+- name: CrowdSec >> RedHat | Install collections
+  become: true
+  tags: [crowdsec]
+  ansible.builtin.command:
+    cmd: cscli collections install {{ item }}
+  loop: "{{ crowdsec_collections }}"
+  register: crowdsec_collection_result
+  # noinspection YAMLIncompatibleTypes
+  changed_when: "'already installed' not in crowdsec_collection_result.stdout"
+  loop_control:
+    label: "{{ item }}"
+
+- name: CrowdSec >> RedHat | Check enrollment status
+  become: true
+  tags: [crowdsec]
+  ansible.builtin.command:
+    cmd: cscli console status
+  register: crowdsec_status
+  changed_when: false
+  failed_when: false
+
+- name: CrowdSec >> RedHat | Enroll with Central API
+  become: true
+  tags: [crowdsec]
+  when: "'Enrolled' not in crowdsec_status.stdout"
+  changed_when: true
+  no_log: true
+  ansible.builtin.command:
+    cmd: cscli console enroll {{ crowdsec_enrollment_key }}
+  notify: CrowdSec | Restart
+
+- name: CrowdSec >> RedHat | Ensure additional services running
+  become: true
+  tags: [crowdsec]
+  when: item.service is defined
+  ansible.builtin.systemd:
+    name: "{{ item.service }}"
+    state: started
+    enabled: true
+  loop: "{{ crowdsec_additional_packages }}"
+  loop_control:
+    label: "{{ item.name }}"

@@ -1,0 +1,12 @@
+---
+crowdsec_uninstall: false
+crowdsec_enrollment_key: ""
+crowdsec_additional_packages:
+  - name: crowdsec-firewall-bouncer-nftables
+    service: crowdsec-firewall-bouncer
+crowdsec_collections:
+  - crowdsecurity/sshd
+  - crowdsecurity/linux
+  - crowdsecurity/nftables
+  - crowdsecurity/linux-lpe
+  - crowdsecurity/whitelist-good-actors
