@@ -1,0 +1,67 @@
+---
+- name: Certbot >> RedHat | Install package
+  become: true
+  tags: [certbot, install]
+  ansible.builtin.dnf:
+    name:
+      - certbot
+    state: present
+
+- name: Certbot >> RedHat | Create certs directory
+  become: true
+  tags: [certbot, install]
+  ansible.builtin.file:
+    path: /etc/certbot/certs
+    state: directory
+    owner: root
+    group: root
+    mode: "0750"
+
+- name: Certbot >> RedHat | Create renewal-hooks directory
+  become: true
+  tags: [certbot, install]
+  ansible.builtin.file:
+    path: /etc/letsencrypt/renewal-hooks/deploy
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Certbot >> RedHat | Deploy letsencrypt hook
+  become: true
+  tags: [certbot, install]
+  ansible.builtin.template:
+    src: deploy.sh.j2
+    dest: /etc/letsencrypt/renewal-hooks/deploy/certbot.sh
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Certbot >> RedHat | Cloudflare Setup
+  tags: [certbot, install]
+  when: certbot_cloudflare_api_token | length > 0
+  ansible.builtin.include_tasks: install/cloudflare.yml
+
+- name: Certbot >> RedHat | Enable renew timer
+  become: true
+  tags: [certbot, install]
+  ansible.builtin.systemd:
+    name: certbot-renew.timer
+    state: started
+    enabled: true
+
+- name: Certbot >> RedHat | Build combined PEM files
+  become: true
+  tags: [certbot, install]
+  when:
+    - certbot_email | length > 0
+    - certbot_domains | length > 0
+  ansible.builtin.shell:
+    cmd: >-
+      cat /etc/letsencrypt/live/{{ item }}/fullchain.pem
+      /etc/letsencrypt/live/{{ item }}/privkey.pem
+      > /etc/certbot/certs/{{ item }}.pem
+      && chmod 640 /etc/certbot/certs/{{ item }}.pem
+      && chown root:root /etc/certbot/certs/{{ item }}.pem
+    creates: /etc/certbot/certs/{{ item }}.pem
+  loop: "{{ certbot_domains }}"

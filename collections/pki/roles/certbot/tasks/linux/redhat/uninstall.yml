@@ -1,0 +1,37 @@
+---
+- name: Certbot >> RedHat | Disable renew timer
+  become: true
+  tags: [certbot, uninstall]
+  ansible.builtin.systemd:
+    name: certbot-renew.timer
+    state: stopped
+    enabled: false
+  ignore_errors: true
+
+- name: Certbot >> RedHat | Remove Cloudflare credentials
+  become: true
+  tags: [certbot, uninstall]
+  ansible.builtin.file:
+    path: /etc/letsencrypt/cloudflare.ini
+    state: absent
+
+- name: Certbot >> RedHat | Remove combined PEM files
+  become: true
+  tags: [certbot, uninstall]
+  ansible.builtin.file:
+    path: /etc/certbot/certs
+    state: absent
+
+- name: Certbot >> RedHat | Remove letsencrypt hook
+  become: true
+  tags: [certbot, uninstall]
+  ansible.builtin.file:
+    path: /etc/letsencrypt/renewal-hooks/deploy/certbot.sh
+    state: absent
+
+- name: Certbot >> RedHat | Uninstall package
+  become: true
+  tags: [certbot, uninstall]
+  ansible.builtin.dnf:
+    name: certbot
+    state: absent

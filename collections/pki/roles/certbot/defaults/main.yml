@@ -1,0 +1,5 @@
+---
+certbot_uninstall: false
+certbot_email: ''
+certbot_domains: []
+certbot_cloudflare_api_token: ''

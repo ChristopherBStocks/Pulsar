@@ -1,0 +1,26 @@
+#!/bin/bash
+# Managed by Ansible - do not edit manually.
+# Certbot deploy hook: rebuilds combined PEM files for HAProxy after renewal.
+set -euo pipefail
+
+CERTS_DIR="/etc/certbot/certs"
+
+build_pem() {
+    local lineage="$1"
+    local domain
+    domain=$(basename "$lineage")
+    cat "$lineage/fullchain.pem" "$lineage/privkey.pem" > "$CERTS_DIR/${domain}.pem"
+    chmod 640 "$CERTS_DIR/${domain}.pem"
+    chown root:root "$CERTS_DIR/${domain}.pem"
+}
+
+if [ -n "${RENEWED_LINEAGE:-}" ]; then
+    build_pem "$RENEWED_LINEAGE"
+else
+    for dir in /etc/letsencrypt/live/*/; do
+        [ -d "$dir" ] || continue
+        build_pem "${dir%/}"
+    done
+fi
+
+systemctl reload certbot

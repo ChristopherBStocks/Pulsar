@@ -1,0 +1,40 @@
+---
+- name: Certbot >> RedHat | Install cloudflare package
+  become: true
+  tags: [certbot, install]
+  ansible.builtin.dnf:
+    name:
+      - python3-certbot-dns-cloudflare
+    state: present
+
+- name: Certbot >> RedHat | Deploy Cloudflare credentials
+  become: true
+  tags: [certbot, install]
+  when: certbot_cloudflare_api_token | length > 0
+  ansible.builtin.template:
+    src: cloudflare.ini.j2
+    dest: /etc/letsencrypt/cloudflare.ini
+    owner: root
+    group: root
+    mode: "0600"
+
+- name: Certbot >> RedHat | Obtain cloudflare certificates
+  become: true
+  tags: [certbot, install]
+  when:
+    - certbot_email | length > 0
+    - certbot_cloudflare_api_token | length > 0
+    - certbot_domains | length > 0
+  ansible.builtin.command:
+    cmd: >-
+      certbot certonly
+      --dns-cloudflare
+      --dns-cloudflare-credentials /etc/letsencrypt/cloudflare.ini
+      --email {{ certbot_email }}
+      --agree-tos
+      --non-interactive
+      --keep-until-expiring
+      -d {{ item }}
+  register: certbot_result
+  changed_when: "'Certificate not yet due for renewal' not in certbot_result.stdout"
+  loop: "{{ certbot_domains }}"

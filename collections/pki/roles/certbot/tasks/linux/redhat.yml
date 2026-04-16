@@ -1,0 +1,10 @@
+---
+- name: Certbot >> RedHat | Install
+  tags: [certbot, install]
+  when: not certbot_uninstall
+  ansible.builtin.include_tasks: redhat/install.yml
+
+- name: Certbot RedHat | Uninstall
+  tags: [certbot, uninstall]
+  when: certbot_uninstall
+  ansible.builtin.include_tasks: redhat/uninstall.yml
