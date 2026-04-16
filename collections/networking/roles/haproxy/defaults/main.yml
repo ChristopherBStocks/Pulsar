@@ -46,7 +46,6 @@ haproxy_crowdsec_spoa_listen: "127.0.0.1:9000"
 #       backend: app_backend    # backend name to route to
 #   headers: {}                 # per-frontend header overrides (merged with haproxy_security_headers)
 haproxy_frontends: []
-
 # Backends
 # Each entry:
 #   name: myapp                 # required

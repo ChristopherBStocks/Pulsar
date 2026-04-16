@@ -14,7 +14,10 @@ openssh_allow_agent_forwarding: false
 openssh_authorized_keys_file: .ssh/authorized_keys
 openssh_print_last_log: true
 openssh_banner: /etc/issue.net
-openssh_sftp_subsystem: "{{ '/usr/libexec/openssh/sftp-server' if ansible_facts['os_family'] == 'RedHat' else '/usr/lib/openssh/sftp-server' }}"
+openssh_sftp_subsystem: >-
+  {{ '/usr/libexec/openssh/sftp-server'
+  if ansible_facts['os_family'] == 'RedHat'
+  else '/usr/lib/openssh/sftp-server' }}
 openssh_ciphers:
   - aes256-gcm@openssh.com
   - chacha20-poly1305@openssh.com

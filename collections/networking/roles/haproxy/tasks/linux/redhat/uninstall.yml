@@ -6,7 +6,7 @@
     name: haproxy
     state: stopped
     enabled: false
-  ignore_errors: true
+  failed_when: false
 
 - name: HAProxy >> RedHat | Remove SPOE config
   become: true
