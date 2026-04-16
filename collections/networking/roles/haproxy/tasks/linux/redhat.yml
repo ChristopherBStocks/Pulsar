@@ -1,0 +1,10 @@
+---
+- name: HAProxy >> RedHat | Install
+  tags: [haproxy, install]
+  when: not haproxy_uninstall
+  ansible.builtin.include_tasks: redhat/install.yml
+
+- name: HAProxy >> RedHat | Uninstall
+  tags: [haproxy, uninstall]
+  when: haproxy_uninstall
+  ansible.builtin.include_tasks: redhat/uninstall.yml

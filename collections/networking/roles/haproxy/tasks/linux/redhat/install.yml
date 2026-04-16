@@ -1,0 +1,46 @@
+---
+- name: HAProxy >> RedHat | Install package
+  become: true
+  tags: [haproxy, install]
+  ansible.builtin.dnf:
+    name: haproxy
+    state: present
+
+- name: HAProxy >> RedHat | Allow HAProxy to connect to any port
+  become: true
+  tags: [haproxy, install]
+  ansible.posix.seboolean:
+    name: haproxy_connect_any
+    state: true
+    persistent: true
+
+- name: HAProxy >> RedHat | Deploy HAProxy SPOE config
+  become: true
+  tags: [haproxy, install]
+  when: haproxy_crowdsec_enabled
+  ansible.builtin.template:
+    src: crowdsec.cfg.j2
+    dest: /etc/haproxy/crowdsec.cfg
+    owner: root
+    group: haproxy
+    mode: "0640"
+  notify: HAProxy >> Linux | Reload
+
+- name: HAProxy >> RedHat | Deploy haproxy.cfg
+  become: true
+  tags: [haproxy, install]
+  ansible.builtin.template:
+    src: haproxy.cfg.j2
+    dest: /etc/haproxy/haproxy.cfg
+    owner: root
+    group: haproxy
+    mode: "0640"
+  notify: HAProxy >> Linux | Reload
+
+- name: HAProxy >> RedHat | Ensure HAProxy running
+  become: true
+  tags: [haproxy]
+  ansible.builtin.systemd:
+    name: haproxy
+    state: started
+    enabled: true

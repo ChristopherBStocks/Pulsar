@@ -1,0 +1,59 @@
+---
+haproxy_uninstall: false
+haproxy_full_certs_dir: "/etc/certbot/certs/"
+
+# HAProxy global tuning
+haproxy_maxconn: 20000
+haproxy_log: "127.0.0.1 local2"
+
+# Timeouts
+haproxy_timeout_connect: "5s"
+haproxy_timeout_client: "30s"
+haproxy_timeout_server: "30s"
+
+# Add a frontend that redirects all HTTP traffic to HTTPS
+haproxy_http_redirect: false
+
+# Stats page
+haproxy_stats_enabled: false
+haproxy_stats_port: 1936
+haproxy_stats_uri: "/stats"
+haproxy_stats_auth: "admin:changeme"
+
+# Security Headers
+# Prefix a key with '-' to remove that header entirely (e.g. -Server).
+haproxy_security_headers:
+  Strict-Transport-Security: "max-age=31536000; includeSubDomains; preload"
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: "geolocation=(), microphone=(), camera=()"
+  X-XSS-Protection: "0"
+  -Server: ""
+
+haproxy_crowdsec_enabled: false
+haproxy_crowdsec_spoa_listen: "127.0.0.1:9000"
+
+# Frontends
+# Each entry:
+#   name: https_front           # required
+#   bind: "*:443"               # required
+#   ssl: true                   # append "ssl crt /etc/haproxy/certs/" to bind (default: false)
+#   default_backend: myapp      # optional if all traffic is covered by use_backends
+#   options: []                 # extra "option" lines (e.g. [forwardfor, http-server-close])
+#   use_backends:               # optional host-based routing (ACLs), evaluated before default_backend
+#     - host: app.example.com   # Host header to match
+#       backend: app_backend    # backend name to route to
+#   headers: {}                 # per-frontend header overrides (merged with haproxy_security_headers)
+haproxy_frontends: []
+
+# Backends
+# Each entry:
+#   name: myapp                 # required
+#   balance: roundrobin         # load-balancing algorithm (default: roundrobin)
+#   options: []                 # extra "option" lines (e.g. [httpchk GET /health])
+#   servers:
+#     - name: app1              # required
+#       address: "127.0.0.1:8080"  # required
+#       check: true             # enable health checks (default: true)
+haproxy_backends: []

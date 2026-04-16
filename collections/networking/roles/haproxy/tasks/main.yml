@@ -1,0 +1,5 @@
+---
+- name: HAProxy | Linux Setup
+  tags: [haproxy]
+  ansible.builtin.include_tasks: linux.yml
+  when: ansible_facts['system'] == 'Linux'

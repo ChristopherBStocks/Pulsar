@@ -1,0 +1,7 @@
+---
+- name: HAProxy >> Linux | Reload
+  become: true
+  when: ansible_facts['system'] == 'Linux'
+  ansible.builtin.systemd:
+    name: haproxy
+    state: reloaded

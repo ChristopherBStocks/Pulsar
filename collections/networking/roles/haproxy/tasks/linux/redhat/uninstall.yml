@@ -1,0 +1,30 @@
+---
+- name: HAProxy >> RedHat | Stop and Disable Service
+  become: true
+  tags: [haproxy, uninstall]
+  ansible.builtin.systemd:
+    name: haproxy
+    state: stopped
+    enabled: false
+  ignore_errors: true
+
+- name: HAProxy >> RedHat | Remove SPOE config
+  become: true
+  tags: [haproxy, uninstall]
+  ansible.builtin.file:
+    path: /etc/haproxy/crowdsec.cfg
+    state: absent
+
+- name: HAProxy >> RedHat | Remove haproxy.cfg
+  become: true
+  tags: [haproxy, uninstall]
+  ansible.builtin.file:
+    path: /etc/haproxy/haproxy.cfg
+    state: absent
+
+- name: HAProxy >> RedHat | Uninstall package
+  become: true
+  tags: [haproxy, uninstall]
+  ansible.builtin.dnf:
+    name: haproxy
+    state: absent

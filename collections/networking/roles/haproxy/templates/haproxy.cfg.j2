@@ -1,0 +1,101 @@
+# Managed by Ansible - do not edit manually.
+
+global
+    log {{ haproxy_log }}
+    maxconn {{ haproxy_maxconn }}
+    user haproxy
+    group haproxy
+    daemon
+{% if haproxy_crowdsec_enabled %}
+    tune.bufsize 65536
+    lua-prepend-path /usr/lib/crowdsec-haproxy-spoa-bouncer/lua/?.lua
+    lua-load /usr/lib/crowdsec-haproxy-spoa-bouncer/lua/crowdsec.lua
+    setenv CROWDSEC_BAN_TEMPLATE_PATH /var/lib/crowdsec-haproxy-spoa-bouncer/html/ban.html
+    setenv CROWDSEC_CAPTCHA_TEMPLATE_PATH /var/lib/crowdsec-haproxy-spoa-bouncer/html/captcha.html
+{% endif %}
+
+defaults
+    log global
+    mode http
+    option httplog
+    option dontlognull
+{% if haproxy_crowdsec_enabled %}
+    option http-buffer-request
+{% endif %}
+    timeout connect {{ haproxy_timeout_connect }}
+    timeout client  {{ haproxy_timeout_client }}
+    timeout server  {{ haproxy_timeout_server }}
+{% if haproxy_stats_enabled %}
+
+frontend stats
+    bind *:{{ haproxy_stats_port }}
+    stats enable
+    stats uri {{ haproxy_stats_uri }}
+    stats auth {{ haproxy_stats_auth }}
+    stats refresh 30s
+{% endif %}
+{% if haproxy_http_redirect %}
+
+frontend http_redirect
+    bind *:80
+    redirect scheme https code 301
+{% endif %}
+{% for frontend in haproxy_frontends %}
+
+frontend {{ frontend.name }}
+    bind {{ frontend.bind }}{% if frontend.ssl | default(false) %} ssl crt {{ haproxy_full_certs_dir }}{% endif %}
+
+{% if haproxy_crowdsec_enabled %}
+    unique-id-format %[uuid()]
+    unique-id-header X-Unique-ID
+    filter spoe engine crowdsec config /etc/haproxy/crowdsec.cfg
+{% endif %}
+{% for opt in frontend.options | default([]) %}
+    option {{ opt }}
+{% endfor %}
+{% if haproxy_crowdsec_enabled %}
+    acl crowdsec_body_within_limit req.body_size -m int le 51200
+    http-request send-spoe-group crowdsec crowdsec-http-body if crowdsec_body_within_limit || !{ req.body_size -m found }
+    http-request send-spoe-group crowdsec crowdsec-http-no-body if !crowdsec_body_within_limit { req.body_size -m found }
+    http-request redirect code 302 location %[url] if { var(txn.crowdsec.remediation) -m str "allow" } { var(txn.crowdsec.redirect) -m found }
+    http-request lua.crowdsec_handle if { var(txn.crowdsec.remediation) -m str "captcha" }
+    http-request lua.crowdsec_handle if { var(txn.crowdsec.remediation) -m str "ban" }
+    http-after-response set-header Set-Cookie %[var(txn.crowdsec.captcha_cookie)] if { var(txn.crowdsec.captcha_status) -m found } { var(txn.crowdsec.captcha_cookie) -m found }
+    http-after-response set-header Set-Cookie %[var(txn.crowdsec.captcha_cookie)] if { var(txn.crowdsec.captcha_cookie) -m found } !{ var(txn.crowdsec.captcha_status) -m found }
+{% endif %}
+{% for ub in frontend.use_backends | default([]) %}
+    acl acl_{{ ub.backend }} hdr(host) -i {{ ub.host }}
+    use_backend {{ ub.backend }} if acl_{{ ub.backend }}
+{% endfor %}
+{% if frontend.default_backend is defined %}
+    default_backend {{ frontend.default_backend }}
+{% endif %}
+{% set merged_headers = haproxy_security_headers | combine(frontend.headers | default({})) %}
+{% for key, value in merged_headers.items() %}
+{% if key.startswith('-') %}
+    http-response del-header {{ key[1:] }}
+{% else %}
+    http-response set-header {{ key }} "{{ value }}"
+{% endif %}
+{% endfor %}
+{% endfor %}
+{% for backend in haproxy_backends %}
+
+backend {{ backend.name }}
+    balance {{ backend.balance | default('roundrobin') }}
+{% for opt in backend.options | default([]) %}
+    option {{ opt }}
+{% endfor %}
+{% for server in backend.servers %}
+    server {{ server.name }} {{ server.address }}{% if server.check | default(true) %} check{% endif %}
+
+{% endfor %}
+{% endfor %}
+{% if haproxy_crowdsec_enabled %}
+
+backend crowdsec-spoa
+    mode tcp
+    timeout connect 2s
+    timeout server 60s
+    server spoa {{ haproxy_crowdsec_spoa_listen }}
+{% endif %}
