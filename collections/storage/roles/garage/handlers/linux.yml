@@ -1,0 +1,15 @@
+---
+- name: Garage >> Linux | Restart
+  become: true
+  tags: [garage]
+  when: ansible_facts['system'] == 'Linux'
+  ansible.builtin.systemd:
+    name: garage
+    state: restarted
+
+- name: Garage >> Linux | Reload Daemon
+  become: true
+  tags: [garage]
+  when: ansible_facts['system'] == 'Linux'
+  ansible.builtin.systemd:
+    daemon_reload: true

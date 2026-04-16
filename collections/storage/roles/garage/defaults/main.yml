@@ -1,0 +1,22 @@
+---
+garage_uninstall: false
+garage_url: "https://garagehq.deuxfleurs.fr/_releases/v2.2.0/x86_64-unknown-linux-musl/garage"
+
+garage_install_path: "/usr/bin"
+
+garage_replication_factor: 1
+
+garage_metadata_dir: "/var/lib/garage/meta"
+garage_data_dir: "/var/lib/garage/data"
+
+garage_rpc_bind_addr: "[::]:3901"
+garage_rpc_public_addr: "{{ ansible_facts['default_ipv4']['address'] }}:3901"
+garage_rpc_secret: ''
+
+garage_s3_region: "garage"
+garage_s3_api_addr: "[::]:3900"
+garage_s3_root_domain: ".s3.garage.localhost"
+
+garage_admin_api_addr: "[::]:3903"
+garage_admin_token: ''
+garage_metrics_token: ''

@@ -1,0 +1,10 @@
+---
+- name: Garage >> RedHat | Install
+  tags: [garage, install]
+  when: not garage_uninstall
+  ansible.builtin.include_tasks: redhat/install.yml
+
+- name: Garage >> RedHat | Uninstall
+  tags: [garage, uninstall]
+  when: garage_uninstall
+  ansible.builtin.include_tasks: redhat/uninstall.yml

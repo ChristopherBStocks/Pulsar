@@ -1,0 +1,12 @@
+[Unit]
+Description=Garage Object Storage
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+ExecStart={{ garage_install_path }}/garage -c /etc/garage.toml server
+Restart=on-failure
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,31 @@
+---
+- name: Garage >> RedHat | Stop and Disable Service
+  become: true
+  tags: [garage, uninstall]
+  ansible.builtin.systemd:
+    name: garage
+    state: stopped
+    enabled: false
+  ignore_errors: true
+
+- name: Garage >> RedHat | Remove Systemd Unit
+  become: true
+  tags: [garage, uninstall]
+  ansible.builtin.file:
+    path: /etc/systemd/system/garage.service
+    state: absent
+  notify: Garage >> Linux | Reload Daemon
+
+- name: Garage >> RedHat | Remove Config
+  become: true
+  tags: [garage, uninstall]
+  ansible.builtin.file:
+    path: /etc/garage.toml
+    state: absent
+
+- name: Garage >> RedHat | Remove Binary
+  become: true
+  tags: [garage, uninstall]
+  ansible.builtin.file:
+    path: "/bin/garage"
+    state: absent

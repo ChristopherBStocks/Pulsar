@@ -1,0 +1,48 @@
+---
+- name: Garage >> RedHat | Assert Values
+  tags: [garage, install]
+  ansible.builtin.assert:
+    that:
+      - garage_rpc_secret | length > 0
+      - garage_admin_token | length > 0
+      - garage_metrics_token | length > 0
+    fail_msg: "garage_rpc_secret, garage_admin_token, and garage_metrics_token are required"
+
+- name: Garage >> RedHat | Download Binary
+  become: true
+  tags: [garage, install]
+  ansible.builtin.get_url:
+    url: "{{ garage_url }}"
+    dest: "{{ garage_install_path }}/garage"
+    mode: "0755"
+
+- name: Garage >> RedHat | Configure Service
+  become: true
+  tags: [garage, install]
+  ansible.builtin.template:
+    src: garage.toml.j2
+    dest: /etc/garage.toml
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Garage >> Linux | Restart
+
+- name: Garage >> RedHat | Install Systemd Unit
+  become: true
+  tags: [garage, install]
+  ansible.builtin.template:
+    src: garage.service.j2
+    dest: /etc/systemd/system/garage.service
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Garage >> Linux | Restart
+
+- name: Garage >> RedHat | Enable Service
+  become: true
+  tags: [garage, install]
+  ansible.builtin.systemd:
+    name: garage
+    state: started
+    enabled: true
+    daemon_reload: true
