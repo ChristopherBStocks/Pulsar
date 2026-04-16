@@ -93,6 +93,7 @@
   ansible.builtin.command:
     cmd: cscli bouncers add {{ item.bouncer_name }} -o raw
   register: crowdsec_bouncer_key
+  changed_when: true
   loop: "{{ crowdsec_additional_packages }}"
   loop_control:
     label: "{{ item.name }}"
@@ -105,7 +106,7 @@
     - item is not skipped
   ansible.builtin.lineinfile:
     path: "{{ item.item.bouncer_config }}"
-    regexp: '^api_key:'
+    regexp: "^api_key:"
     line: "api_key: {{ item.stdout }}"
   loop: "{{ crowdsec_bouncer_key.results }}"
   loop_control:
