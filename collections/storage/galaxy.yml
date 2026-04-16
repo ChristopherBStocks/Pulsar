@@ -1,0 +1,15 @@
+---
+namespace: christopherbstocks
+name: pulsar_storage
+version: 0.0.0
+readme: ../../README.md
+license_file: ../../LICENSE.md
+authors:
+  - Christopher Stocks <christopher.stocks@protonmail.ch>
+description: Ansible collection for Linux storage services
+tags:
+  - linux
+  - storage
+repository: https://github.com/ChristopherBStocks/Pulsar
+dependencies: {}
+build_ignore: []
