@@ -1,0 +1,16 @@
+---
+namespace: christopherbstocks
+name: pulsar_virtualisation
+version: 0.0.0
+readme: ../../README.md
+license_file: ../../LICENSE.md
+authors:
+  - Christopher Stocks <christopher.stocks@protonmail.ch>
+description: Ansible collection for Linux virtualisation and container runtime management.
+tags:
+  - linux
+  - virtualisation
+  - containers
+repository: https://github.com/ChristopherBStocks/Pulsar
+dependencies: {}
+build_ignore: []
