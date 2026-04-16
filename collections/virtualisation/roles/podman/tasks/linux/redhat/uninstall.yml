@@ -1,0 +1,7 @@
+---
+- name: Podman >> RedHat | Uninstall Podman
+  become: true
+  tags: [podman, uninstall]
+  ansible.builtin.dnf:
+    name: podman
+    state: absent

@@ -1,0 +1,7 @@
+---
+- name: Podman >> RedHat | Install Podman
+  become: true
+  tags: [podman, install]
+  ansible.builtin.dnf:
+    name: podman
+    state: present

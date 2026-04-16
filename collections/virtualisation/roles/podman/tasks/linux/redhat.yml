@@ -1,0 +1,10 @@
+---
+- name: Podman >> RedHat | Install
+  tags: [podman, install]
+  when: not podman_uninstall
+  ansible.builtin.include_tasks: redhat/install.yml
+
+- name: Podman >> RedHat | Uninstall
+  tags: [podman, uninstall]
+  when: podman_uninstall
+  ansible.builtin.include_tasks: redhat/uninstall.yml
