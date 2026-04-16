@@ -1,3 +1,8 @@
+## [security/v0.1.3] - 2026-04-16
+
+### 🐛 Bug Fixes
+
+- *(security)* Patch crowdsec bouncer registration
 ## [security/v0.1.2] - 2026-04-15
 
 ### 🐛 Bug Fixes
