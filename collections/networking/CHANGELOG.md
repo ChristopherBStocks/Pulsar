@@ -1,3 +1,8 @@
+## [networking/v0.2.1] - 2026-04-17
+
+### 🚀 Features
+
+- *(networking)* Add wildcard host support to haproxy ACL routing
 ## [networking/v0.2.0] - 2026-04-17
 
 ### 🚀 Features
