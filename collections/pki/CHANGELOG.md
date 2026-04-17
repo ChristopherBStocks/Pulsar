@@ -1,3 +1,9 @@
+## [pki/v0.1.2] - 2026-04-17
+
+### 🐛 Bug Fixes
+
+- *(pki)* Handle wildcard certificate symlinks in certbot role
+- *(pki)* Remove unnecessary certbot reload from deploy hook
 ## [pki/v0.1.1] - 2026-04-17
 
 ### 🐛 Bug Fixes
