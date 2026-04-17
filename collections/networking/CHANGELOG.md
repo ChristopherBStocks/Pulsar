@@ -1,3 +1,14 @@
+## [networking/v0.2.0] - 2026-04-17
+
+### 🚀 Features
+
+- *(networking)* Add haproxy role
+- *(networking)* Add SSL support to haproxy backend servers
+- *(networking)* Add per-frontend crowdsec buffer control to haproxy role
+
+### 🐛 Bug Fixes
+
+- *(networking)* Patch haproxy and openssh roles
 ## [networking/v0.1.1] - 2026-04-15
 
 ### 🐛 Bug Fixes
