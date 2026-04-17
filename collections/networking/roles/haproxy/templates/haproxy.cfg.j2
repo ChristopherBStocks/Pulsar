@@ -64,7 +64,11 @@ frontend {{ frontend.name }}
     http-after-response set-header Set-Cookie %[var(txn.crowdsec.captcha_cookie)] if { var(txn.crowdsec.captcha_cookie) -m found } !{ var(txn.crowdsec.captcha_status) -m found }
 {% endif %}
 {% for ub in frontend.use_backends | default([]) %}
+{% if ub.host.startswith('*.') %}
+    acl acl_{{ ub.backend }} hdr_end(host) -i {{ ub.host[1:] }}
+{% else %}
     acl acl_{{ ub.backend }} hdr(host) -i {{ ub.host }}
+{% endif %}
     use_backend {{ ub.backend }} if acl_{{ ub.backend }}
 {% endfor %}
 {% if frontend.default_backend is defined %}

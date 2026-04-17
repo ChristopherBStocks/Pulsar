@@ -42,7 +42,7 @@ haproxy_crowdsec_spoa_listen: "127.0.0.1:9000"
 #   default_backend: myapp      # optional if all traffic is covered by use_backends
 #   options: []                 # extra "option" lines (e.g. [forwardfor, http-server-close])
 #   use_backends:               # optional host-based routing (ACLs), evaluated before default_backend
-#     - host: app.example.com   # Host header to match
+#     - host: app.example.com   # Host header to match (use *.example.com for wildcard)
 #       backend: app_backend    # backend name to route to
 #   headers: {}                 # per-frontend header overrides (merged with haproxy_security_headers)
 #   crowdsec_buffer_request: true  # buffer request body for CrowdSec inspection (default: true, disable for large file uploads)
