@@ -12,6 +12,9 @@ build_pem() {
     cat "$lineage/fullchain.pem" "$lineage/privkey.pem" > "$CERTS_DIR/${domain}.pem"
     chmod 640 "$CERTS_DIR/${domain}.pem"
     chown root:root "$CERTS_DIR/${domain}.pem"
+    if openssl x509 -noout -text -in "$lineage/fullchain.pem" | grep -q "DNS:\*\.${domain}"; then
+        ln -sf "$CERTS_DIR/${domain}.pem" "$CERTS_DIR/*.${domain}.pem"
+    fi
 }
 
 if [ -n "${RENEWED_LINEAGE:-}" ]; then

@@ -67,3 +67,16 @@
       && chown root:root /etc/certbot/certs/{{ certbot_domain_name }}.pem
     creates: /etc/certbot/certs/{{ certbot_domain_name }}.pem
   loop: "{{ certbot_domains }}"
+
+- name: Certbot >> RedHat | Create wildcard symlinks
+  become: true
+  tags: [certbot, install]
+  when: item.startswith('*.')
+  vars:
+    certbot_domain_name: "{{ item | regex_replace('^\\*\\.', '') }}"
+  ansible.builtin.file:
+    src: "/etc/certbot/certs/{{ certbot_domain_name }}.pem"
+    dest: "/etc/certbot/certs/{{ item }}.pem"
+    state: link
+    force: true
+  loop: "{{ certbot_domains }}"
