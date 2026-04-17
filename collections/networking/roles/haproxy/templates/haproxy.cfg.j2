@@ -87,7 +87,7 @@ backend {{ backend.name }}
     option {{ opt }}
 {% endfor %}
 {% for server in backend.servers %}
-    server {{ server.name }} {{ server.address }}{% if server.check | default(true) %} check{% endif %}
+    server {{ server.name }} {{ server.address }}{% if server.ssl | default(false) %} ssl{% if not server.ssl_verify | default(true) %} verify none{% endif %}{% endif %}{% if server.check | default(true) %} check{% endif %}
 
 {% endfor %}
 {% endfor %}
