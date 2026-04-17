@@ -56,12 +56,14 @@
   when:
     - certbot_email | length > 0
     - certbot_domains | length > 0
+  vars:
+    certbot_domain_name: "{{ item | regex_replace('^\\*\\.', '') }}"
   ansible.builtin.shell:
     cmd: >-
-      cat /etc/letsencrypt/live/{{ item }}/fullchain.pem
-      /etc/letsencrypt/live/{{ item }}/privkey.pem
-      > /etc/certbot/certs/{{ item }}.pem
-      && chmod 640 /etc/certbot/certs/{{ item }}.pem
-      && chown root:root /etc/certbot/certs/{{ item }}.pem
-    creates: /etc/certbot/certs/{{ item }}.pem
+      cat /etc/letsencrypt/live/{{ certbot_domain_name }}/fullchain.pem
+      /etc/letsencrypt/live/{{ certbot_domain_name }}/privkey.pem
+      > /etc/certbot/certs/{{ certbot_domain_name }}.pem
+      && chmod 640 /etc/certbot/certs/{{ certbot_domain_name }}.pem
+      && chown root:root /etc/certbot/certs/{{ certbot_domain_name }}.pem
+    creates: /etc/certbot/certs/{{ certbot_domain_name }}.pem
   loop: "{{ certbot_domains }}"
