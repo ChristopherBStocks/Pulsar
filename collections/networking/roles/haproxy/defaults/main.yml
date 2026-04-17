@@ -45,6 +45,7 @@ haproxy_crowdsec_spoa_listen: "127.0.0.1:9000"
 #     - host: app.example.com   # Host header to match
 #       backend: app_backend    # backend name to route to
 #   headers: {}                 # per-frontend header overrides (merged with haproxy_security_headers)
+#   crowdsec_buffer_request: true  # buffer request body for CrowdSec inspection (default: true, disable for large file uploads)
 haproxy_frontends: []
 # Backends
 # Each entry:

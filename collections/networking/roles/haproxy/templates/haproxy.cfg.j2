@@ -19,9 +19,6 @@ defaults
     mode http
     option httplog
     option dontlognull
-{% if haproxy_crowdsec_enabled %}
-    option http-buffer-request
-{% endif %}
     timeout connect {{ haproxy_timeout_connect }}
     timeout client  {{ haproxy_timeout_client }}
     timeout server  {{ haproxy_timeout_server }}
@@ -46,6 +43,9 @@ frontend {{ frontend.name }}
     bind {{ frontend.bind }}{% if frontend.ssl | default(false) %} ssl crt {{ haproxy_full_certs_dir }}{% endif %}
 
 {% if haproxy_crowdsec_enabled %}
+{% if frontend.crowdsec_buffer_request | default(true) %}
+    option http-buffer-request
+{% endif %}
     unique-id-format %[uuid()]
     unique-id-header X-Unique-ID
     filter spoe engine crowdsec config /etc/haproxy/crowdsec.cfg
